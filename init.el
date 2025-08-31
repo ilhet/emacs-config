@@ -6,7 +6,7 @@
 (tooltip-mode -1)       ;disable tooltip
 (menu-bar-mode -1)      ;disable menu bar
 
-(load-theme 'tango-dark)     ;set theme
+(load-theme 'modus-vivendi)     ;set theme
 
 (transient-mark-mode 1)
 
@@ -25,6 +25,10 @@
 (require 'use-package)
 (setq use-package-always-ensure t)
 
+;; list of used packages
+(use-package auctex)
+(use-package org-roam)
+(use-package yasnippet)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -41,13 +45,11 @@
  )
 
 ;;auctex customization
-(use-package auctex)
 (setq org-latex-create-formula-image-program 'dvipng)
+(setq TeX-auto-save t)
+(setq TeX-parse-self t)
 
-(use-package yasnippet)
-
-;;org-roam
-(use-package org-roam)
+;;org-roam customization
 (setq org-roam-directory (file-truename "~/Documents/Notizen"))
 (org-roam-db-autosync-mode)
 
