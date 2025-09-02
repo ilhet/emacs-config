@@ -35,7 +35,6 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(org-agenda-files '("~/Documents/Notizen/1.org"))
  '(package-selected-packages '(auctex org-roam yasnippet)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -50,7 +49,13 @@
 (setq TeX-parse-self t)
 
 ;;org-roam customization
-(setq org-roam-directory (file-truename "~/Documents/Notizen"))
+(setq org-roam-directory (file-truename "~/org"))
 (org-roam-db-autosync-mode)
 
+;;org-mode customization
+(setq org-agenda-files '("~/org"))
 
+;;custom keybinds
+(global-set-key (kbd "C-c l") #'org-store-link)
+(global-set-key (kbd "C-c a") #'org-agenda)
+(global-set-key (kbd "C-c c") #'org-capture)
