@@ -95,89 +95,19 @@
               (bound-and-true-p org-cdlatex-mode))
           (cdlatex-tab)
         (yas-next-field-or-maybe-expand)))))
+(use-package math-symbol-lists)
+(use-package aas)
+(use-package laas
+  :hook (LaTeX-mode . laas-mode)
+  :hook (org-mode . laas-mode)
+  :config
+  (aas-set-snippets 'laas-mode
+		    ;;set condition
+		    :cond #'texmathp ;expand while in math
+		    ))
+		  
 
-;; Array/tabular input with org-tables and cdlatex 
-;; (use-package org-table
-;;   :after cdlatex
-;;   :bind (:map orgtbl-mode-map
-;;               ("<tab>" . lazytab-org-table-next-field-maybe)
-;;               ("TAB" . lazytab-org-table-next-field-maybe))
-;;   :init
-;;   (add-hook 'cdlatex-tab-hook 'lazytab-cdlatex-or-orgtbl-next-field 90)
-;;   ;; Tabular environments using cdlatex
-;;   (add-to-list 'cdlatex-command-alist '("smat" "Insert smallmatrix env"
-;;                                        "\\left( \\begin{smallmatrix} ? \\end{smallmatrix} \\right)"
-;;                                        lazytab-position-cursor-and-edit
-;;                                        nil nil t))
-;;   (add-to-list 'cdlatex-command-alist '("bmat" "Insert bmatrix env"
-;;                                        "\\begin{bmatrix} ? \\end{bmatrix}"
-;;                                        lazytab-position-cursor-and-edit
-;;                                        nil nil t))
-;;   (add-to-list 'cdlatex-command-alist '("pmat" "Insert pmatrix env"
-;;                                        "\\begin{pmatrix} ? \\end{pmatrix}"
-;;                                        lazytab-position-cursor-and-edit
-;;                                        nil nil t))
-;;   (add-to-list 'cdlatex-command-alist '("tbl" "Insert table"
-;;                                         "\\begin{table}\n\\centering ? \\caption{}\n\\end{table}\n"
-;;                                        lazytab-position-cursor-and-edit
-;;                                        nil t nil))
-;;   :config
-;;   ;; Tab handling in org tables
-;;   (defun lazytab-position-cursor-and-edit ()
-;;     ;; (if (search-backward "\?" (- (point) 100) t)
-;;     ;;     (delete-char 1))
-;;     (cdlatex-position-cursor)
-;;     (lazytab-orgtbl-edit))
 
-;;   (defun lazytab-orgtbl-edit ()
-;;     (advice-add 'orgtbl-ctrl-c-ctrl-c :after #'lazytab-orgtbl-replace)
-;;     (orgtbl-mode 1)
-;;     (open-line 1)
-;;     (insert "\n|"))
-
-;;   (defun lazytab-orgtbl-replace (_)
-;;     (interactive "P")
-;;     (unless (org-at-table-p) (user-error "Not at a table"))
-;;     (let* ((table (org-table-to-lisp))
-;;            params
-;;            (replacement-table
-;;             (if (texmathp)
-;;                 (lazytab-orgtbl-to-amsmath table params)
-;;               (orgtbl-to-latex table params))))
-;;       (kill-region (org-table-begin) (org-table-end))
-;;       (open-line 1)
-;;       (push-mark)
-;;       (insert replacement-table)
-;;       (align-regexp (region-beginning) (region-end) "\\([:space:]*\\)& ")
-;;       (orgtbl-mode -1)
-;;       (advice-remove 'orgtbl-ctrl-c-ctrl-c #'lazytab-orgtbl-replace)))
-  
-;;   (defun lazytab-orgtbl-to-amsmath (table params)
-;;     (orgtbl-to-generic
-;;      table
-;;      (org-combine-plists
-;;       '(:splice t
-;;                 :lstart ""
-;;                 :lend " \\\\"
-;;                 :sep " & "
-;;                 :hline nil
-;;                 :llend "")
-;;       params)))
-
-;;   (defun lazytab-cdlatex-or-orgtbl-next-field ()
-;;     (when (and (bound-and-true-p orgtbl-mode)
-;;                (org-table-p)
-;;                (looking-at "[[:space:]]*\\(?:|\\|$\\)")
-;;                (let ((s (thing-at-point 'sexp)))
-;;                  (not (and s (assoc s cdlatex-command-alist-comb)))))
-;;       (call-interactively #'org-table-next-field)
-;;       t))
-
-;;   (defun lazytab-org-table-next-field-maybe ()
-;;     (interactive)
-;;     (if (bound-and-true-p cdlatex-mode)
-;;         (cdlatex-tab)
-;;       (org-table-next-field))))
 (use-package meow)
 ;;(use-package org-latex-preview)
 
@@ -187,7 +117,12 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(meow-use-clipboard t)
- '(package-selected-packages nil))
+ '(org-export-default-language "de")
+ '(package-selected-packages
+   '(aas auctex cdlatex math-symbol-lists meow org-roam yasnippet))
+ '(package-vc-selected-packages
+   '((LaTeX-auto-activating-snippets :vc-backend Git :url
+				     "https://github.com/ilhet/LaTeX-auto-activating-snippets"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -233,12 +168,18 @@
   "Load a file in current user's configuration directory"
   (load-file (expand-file-name file user-init-dir)))
 
-(if (equal system-type "windows-nt")
+(if (equal system-type 'windows-nt)
     (load-user-file "windows.el"))
 
 (load-user-file "meow.el")
+(load-user-file "laas.el")
+(load-user-file "scalingpreviews.el")
 
 ;;(package-vc-install '(org-mode :url "https://code.tecosaur.net/tec/org-mode" :branch "dev"))
 
+(electric-pair-mode 1)
+(yas-global-mode 1)
+
 ;;mode hooks
 (add-hook 'org-mode-hook #'turn-on-org-cdlatex)
+(add-hook 'latex-mode-hook #'turn-on-cdlatex)
