@@ -28,6 +28,15 @@
 
 ;; list of used packages
 (use-package auctex)
+;;(use-package org-fragtog) 
+(use-package gdscript-mode
+  :hook (gscript-mode . eglot-ensure)
+  )
+(use-package corfu
+  :init
+  (global-corfu-mode)
+  )
+(use-package dap-mode)
 (use-package org-roam)
 ;; CDLatex settings
 (use-package cdlatex
@@ -35,6 +44,16 @@
   :hook (LaTeX-mode . turn-on-cdlatex)
   :bind (:map cdlatex-mode-map 
               ("<tab>" . cdlatex-tab)))
+(use-package cape
+(add-hook 'corfu-mode (lambda ()
+		       (setq-local completion-at-point-functions
+				   (cape-capf-super
+					  #'cape-dabbrev
+					  #'completion-at-point)
+				   )
+		       )
+	  ))
+  
 
 ;; Yasnippet settings
 (use-package yasnippet
@@ -118,11 +137,13 @@
  ;; If there is more than one, they won't work right.
  '(meow-use-clipboard t)
  '(org-export-default-language "de")
- '(package-selected-packages
-   '(aas auctex cdlatex math-symbol-lists meow org-roam yasnippet))
+ '(package-selected-packages nil)
  '(package-vc-selected-packages
-   '((LaTeX-auto-activating-snippets :vc-backend Git :url
-				     "https://github.com/ilhet/LaTeX-auto-activating-snippets"))))
+   '((org-mode :url "https://code.tecosaur.net/tec/org-mode" :branch
+	       "dev")
+     (LaTeX-auto-activating-snippets :vc-backend Git :url
+				     "https://github.com/ilhet/LaTeX-auto-activating-snippets")))
+ '(tab-always-indent 'complete))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -183,3 +204,4 @@
 ;;mode hooks
 (add-hook 'org-mode-hook #'turn-on-org-cdlatex)
 (add-hook 'latex-mode-hook #'turn-on-cdlatex)
+;;(add-hook 'org-mode-hook 'org-fragtog-mode)
